@@ -23,9 +23,16 @@ class DeliveryProblemController {
   }
 
   async indexById(req, res){
+    const { id } = req.params;
+
     const deliveryProblems = await DeliveryProblem.findAll({
-      where: {delivery_id: req.params.id},
-      attributes: ['id', 'delivery_id', 'description']
+      where: { delivery_id: id },
+      include: [
+        {
+          model: Delivery,
+          as: 'delivery',
+        },
+      ],
     });
 
     return res.json(deliveryProblems);
@@ -33,23 +40,29 @@ class DeliveryProblemController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      delivery_id: Yup.number().required(),
       description: Yup.string().required(),
     });
 
-    if(!(await schema.isValid(req.body))){
-      return res.status(400).json({ error: 'Validation fails ' });
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const {
-      id,
-      delivery_id,
-      description} = await DeliveryProblem.create(req.body);
+    const { id } = req.params;
 
-    return res.json({
-      id,
-      delivery_id,
-      description});
+    const delivery = await Delivery.findByPk(id);
+
+    if (!delivery) {
+      return res.status(400).json({
+        message: 'Delivery not found!',
+      });
+    }
+
+    const newDelivery = req.body;
+    newDelivery.delivery_id = id;
+
+    const deliveryProblem = await DeliveryProblem.create(newDelivery);
+
+    return res.json(deliveryProblem);
   }
 
   async cancelById(req, res){

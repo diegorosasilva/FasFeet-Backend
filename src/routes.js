@@ -17,18 +17,23 @@ const upload = multer(multerConfig);
 
 routes.post('/sessions', SessionController.store);
 
+routes.get('/deliveryman/:id/deliveries', DeliveryController.indexOfDeliveryman);
+routes.get('/deliveryman/:deliverymanId/deliveries/:deliveryId', DeliveryController.indexOfDeliverymanOneDelivery);
+routes.put('/deliveryman/:deliverymanId/deliveries/:deliveryId', DeliveryController.updateSignature);
+
 routes.get('/recipients', authMiddleware, RecipientController.index);
 routes.get('/recipients/:id', authMiddleware, RecipientController.indexOne);
 routes.put('/recipients/:id', authMiddleware, RecipientController.update);
 routes.post('/recipients', authMiddleware, RecipientController.store);
 routes.delete('/recipients/:id', authMiddleware, RecipientController.delete);
 
-routes.get('/deliverymans', authMiddleware, DeliverymanController.index);
-routes.get('/deliverymans/:id', authMiddleware, DeliverymanController.indexOne);
+routes.get('/deliverymans', DeliverymanController.index);
+routes.get('/deliverymans/:id', DeliverymanController.indexOne);
 
 routes.post('/deliverymans', authMiddleware, DeliverymanController.store);
 routes.put('/deliverymans/:id', authMiddleware, DeliverymanController.update);
 routes.delete('/deliverymans/:id', authMiddleware, DeliverymanController.delete);
+
 
 routes.get('/deliveries', authMiddleware, DeliveryController.index);
 routes.get('/deliveries/:id', authMiddleware, DeliveryController.indexOne);
@@ -44,7 +49,7 @@ routes.put('/deliverymans/:id/getstarted/:deli', MyDeliveryController.updateStar
 routes.put('/deliverymans/:id/delivered/:deli', MyDeliveryController.updateEnd);
 
 // delivery problems
-routes.post('/deliveryproblems', DeliveryProblemController.store);
+routes.post('/delivery/:id/problems', DeliveryProblemController.store);
 routes.get('/deliveryproblems', DeliveryProblemController.indexProblems);
 routes.get('/delivery/:id/problems', DeliveryProblemController.indexById);
 routes.put('/problem/:id/cancel-delivery', DeliveryProblemController.cancelById);
